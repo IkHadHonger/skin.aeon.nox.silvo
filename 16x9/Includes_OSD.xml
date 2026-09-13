@@ -219,7 +219,25 @@
 				<oninfo>Dialog.Close(all,true)</oninfo>
 				<visible>VideoPlayer.Content(movies) | VideoPlayer.Content(episodes)</visible>
 			</control>
-			<control type="button" id="709">
+			<control type="button" id="8901">
+                                <!-- TINYPPI PATCH: PPI -->
+                                <texturefocus colordiffuse="$VAR[FocusedOSDButtonsColor]">osd/ppi.png</texturefocus>
+                                <texturenofocus colordiffuse="$VAR[UnfocusedOSDButtonsColor]">osd/ppi.png</texturenofocus>
+                                <shadowcolor>shadow</shadowcolor>
+                                <width>103</width>
+                                <height>103</height>
+                                <onclick>RunScript(script.tinyppi)</onclick>
+                        </control>
+                        <control type="button" id="8902">
+                                <!-- TINYPPI PATCH: VS10 -->
+                                <texturefocus colordiffuse="$VAR[FocusedOSDButtonsColor]">osd/vs10.png</texturefocus>
+                                <texturenofocus colordiffuse="$VAR[UnfocusedOSDButtonsColor]">osd/vs10.png</texturenofocus>
+                                <shadowcolor>shadow</shadowcolor>
+                                <width>103</width>
+                                <height>103</height>
+                                <onclick>RunScript(script.tinyppi,dialog)</onclick>
+                        </control>
+                        <control type="button" id="709">
 				<texturefocus />
 				<font>IconOSDButtons</font>
 				<label></label>
@@ -617,7 +635,25 @@
 				<onclick>Dialog.Close(VideoOSD)</onclick>
 				<onclick>ActivateWindow(TVGuide)</onclick>
 			</control>
-			<control type="button" id="815">
+			<control type="button" id="8903">
+                                <!-- TINYPPI PATCH: PVR PPI -->
+                                <texturefocus colordiffuse="$VAR[FocusedOSDButtonsColor]">osd/ppi.png</texturefocus>
+                                <texturenofocus colordiffuse="$VAR[UnfocusedOSDButtonsColor]">osd/ppi.png</texturenofocus>
+                                <shadowcolor>shadow</shadowcolor>
+                                <width>103</width>
+                                <height>103</height>
+                                <onclick>RunScript(script.tinyppi)</onclick>
+                        </control>
+                        <control type="button" id="8904">
+                                <!-- TINYPPI PATCH: PVR VS10 -->
+                                <texturefocus colordiffuse="$VAR[FocusedOSDButtonsColor]">osd/vs10.png</texturefocus>
+                                <texturenofocus colordiffuse="$VAR[UnfocusedOSDButtonsColor]">osd/vs10.png</texturenofocus>
+                                <shadowcolor>shadow</shadowcolor>
+                                <width>103</width>
+                                <height>103</height>
+                                <onclick>RunScript(script.tinyppi,dialog)</onclick>
+                        </control>
+                        <control type="button" id="815">
 				<texturefocus />
 				<font>IconOSDButtons</font>
 				<label></label>

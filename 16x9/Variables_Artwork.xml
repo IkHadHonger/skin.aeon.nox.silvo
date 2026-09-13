@@ -623,6 +623,9 @@
 		<value>$INFO[ListItem.Icon,views/list/]</value>
 	</variable>
 	<variable name="HDRFlagsVar">
+            <!-- DV PATCH: Kodi 22 FEL/MEL flags -->
+            <value condition="Skin.HasSetting(coloredflags) + String.IsEqual(ListItem.HdrType,dolbyvision) + String.IsEqual(ListItem.HdrDetail,7FEL)">hdr/dolbyvision_fel.png</value>
+            <value condition="Skin.HasSetting(coloredflags) + String.IsEqual(ListItem.HdrType,dolbyvision) + String.IsEqual(ListItem.HdrDetail,7MEL)">hdr/dolbyvision_mel.png</value>
 		<value condition="!String.IsEmpty(ListItem.HdrType)">$INFO[ListItem.HdrType,hdr/,.png]</value>
 		<value condition="!String.IsEmpty(ListItem.DBID) + !String.IsEmpty(ListItem.VideoResolution)">hdr/sdr.png</value>
 	</variable>

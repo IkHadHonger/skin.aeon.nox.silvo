@@ -56,6 +56,9 @@
 		<value condition="!String.IsEmpty(Skin.String(MusicGenreIconPath))">$INFO[Skin.String(MusicGenreIconPath)]</value>
 	</variable>
 	<variable name="PlaylistStatsContentVar">
+            <!-- DV PATCH: statistics for focused movie playlist submenu -->
+        <value condition="Control.HasFocus(9010) + String.IsEqual(Container(9010).ListItem.Property(path),videodb://movies/sets/)">Plugin://script.skin.info.service/?action=path_stats&amp;path=$INFO[Container(9010).ListItem.Property(path)]&amp;reload=$INFO[Window(Home).Property(SkinInfo.Library.Refreshed)]</value>
+            <value condition="Control.HasFocus(9010) + String.EndsWith(Container(9010).ListItem.Property(path),.xsp)">Plugin://script.skin.info.service/?action=path_stats&amp;path=$INFO[Container(9010).ListItem.Property(path)]&amp;reload=$INFO[Window(Home).Property(SkinInfo.Library.Refreshed)]</value>
 		<value condition="String.IsEqual(Container(9000).ListItem.Property(InfoLine),path_stats_movies) | String.IsEqual(Container(9000).ListItem.Property(InfoLine),path_stats_tvshows) | String.IsEqual(Container(9000).ListItem.Property(InfoLine),path_stats_musicvideos)">Plugin://script.skin.info.service/?action=path_stats&amp;path=$INFO[Container(9000).ListItem.Property(path)]&amp;reload=$INFO[Window(Home).Property(SkinInfo.Library.Refreshed)]</value>
 	</variable>
 	<variable name="MediaFlagsPathVar">
