@@ -1,0 +1,182 @@
+name: Deploy custom skin
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout cube-custom
+        uses: actions/checkout@v4
+        with:
+          ref: cube-custom
+
+      - name: Create custom build version
+        id: metadata
+        shell: bash
+        run: |
+          python3 <<'EOF'
+          import os
+          import re
+          import xml.etree.ElementTree as ET
+
+          path = "addon.xml"
+          tree = ET.parse(path)
+          root = tree.getroot()
+
+          addon_id = root.get("id")
+          upstream_version = root.get("version")
+
+          match = re.fullmatch(r"(\d+\.\d+\.\d+)~beta(\d+)", upstream_version)
+
+          if match:
+              custom_version = f"{match.group(1)}.{match.group(2)}"
+          else:
+              custom_version = f"{upstream_version}.1"
+
+          root.set("version", custom_version)
+          tree.write(path, encoding="UTF-8", xml_declaration=True)
+
+          print(f"Addon: {addon_id}")
+          print(f"Upstream version: {upstream_version}")
+          print(f"Custom version: {custom_version}")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"addon_id={addon_id}\n")
+              f.write(f"version={custom_version}\n")
+          EOF
+
+      - name: Package skin
+        id: package
+        shell: bash
+        run: |
+          python3 <<'EOF'
+          import os
+          import zipfile
+          from pathlib import Path
+
+          addon_id = "${{ steps.metadata.outputs.addon_id }}"
+          version = "${{ steps.metadata.outputs.version }}"
+          zip_name = f"{addon_id}-{version}.zip"
+
+          excluded_parts = {
+              ".git",
+              ".github",
+              "__pycache__",
+              ".vscode",
+              ".idea",
+          }
+
+          excluded_files = {
+              ".gitignore",
+              ".gitattributes",
+              ".DS_Store",
+          }
+
+          def excluded(path):
+              if any(part in excluded_parts for part in path.parts):
+                  return True
+              if path.name in excluded_files:
+                  return True
+              if path.suffix in {".pyc", ".pyo", ".bak", ".tmp"}:
+                  return True
+              return False
+
+          count = 0
+
+          with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as archive:
+              for root, dirs, files in os.walk("."):
+                  dirs[:] = [
+                      d for d in dirs
+                      if not excluded(Path(root) / d)
+                  ]
+
+                  for filename in files:
+                      path = Path(root) / filename
+
+                      if excluded(path) or path.name == zip_name:
+                          continue
+
+                      relative = path.relative_to(".")
+                      archive_name = Path(addon_id) / relative
+                      archive.write(path, archive_name)
+                      count += 1
+
+          print(f"Created {zip_name} with {count} files")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"zip_name={zip_name}\n")
+          EOF
+
+      - name: Clone my Kodi repository
+        env:
+          REPO_PAT: ${{ secrets.REPO_SILVO_PAT }}
+        run: |
+          git clone \
+            --branch cube-custom \
+            "https://x-access-token:${REPO_PAT}@github.com/IkHadHonger/repository.silvo.git" \
+            repo-silvo
+
+          cd repo-silvo
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Deploy skin to Piers channel
+        run: |
+          ADDON_ID="${{ steps.metadata.outputs.addon_id }}"
+          VERSION="${{ steps.metadata.outputs.version }}"
+          ZIP_NAME="${{ steps.package.outputs.zip_name }}"
+          DEST="repo-silvo/piers/${ADDON_ID}"
+
+          mkdir -p "${DEST}"
+
+          rm -f "${DEST}/${ADDON_ID}-"*.zip
+
+          cp "${ZIP_NAME}" "${DEST}/"
+          cp addon.xml "${DEST}/addon.xml"
+
+          for asset in icon.png fanart.jpg; do
+            if [ -f "resources/${asset}" ]; then
+              cp "resources/${asset}" "${DEST}/${asset}"
+            elif [ -f "resources/media/${asset}" ]; then
+              cp "resources/media/${asset}" "${DEST}/${asset}"
+            elif [ -f "${asset}" ]; then
+              cp "${asset}" "${DEST}/${asset}"
+            fi
+          done
+
+          echo "Deployed ${ADDON_ID} ${VERSION}"
+
+      - name: Generate repository metadata
+        run: |
+          cd repo-silvo
+          python3 _repo_generator.py
+
+      - name: Commit and push repository
+        run: |
+          cd repo-silvo
+          git add .
+
+          if git diff --staged --quiet; then
+            echo "No repository changes"
+          else
+            git commit \
+              -m "Deploy custom Aeon Nox SiLVO ${{ steps.metadata.outputs.version }}" \
+              -m "Source: ${{ github.repository }}@${{ github.sha }}"
+
+            git push origin cube-custom
+          fi
+
+      - name: Summary
+        run: |
+          echo "## Custom skin deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Addon: ${{ steps.metadata.outputs.addon_id }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Version: ${{ steps.metadata.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Target: repository.silvo / cube-custom / piers" >> "$GITHUB_STEP_SUMMARY"
