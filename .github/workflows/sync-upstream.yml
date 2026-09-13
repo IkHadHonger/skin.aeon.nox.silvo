@@ -1,23 +1,22 @@
-name: Sync upstream
+name: Sync Aeon Nox upstream
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "23 4 * * *"
 
 permissions:
   contents: write
-
-concurrency:
-  group: sync-upstream
-  cancel-in-progress: false
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
+    outputs:
+      upstream_changed: ${{ steps.changes.outputs.changed }}
+
     steps:
-      - name: Checkout cube-custom
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: cube-custom
@@ -28,20 +27,55 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Fetch MikeSiLVO upstream
+      - name: Fetch upstream
         run: |
           git remote add upstream https://github.com/MikeSiLVO/skin.aeon.nox.silvo.git
           git fetch upstream main
+          git fetch origin main
 
-      - name: Update clean main mirror
+      - name: Check for upstream changes
+        id: changes
+        shell: bash
         run: |
-          git push --force origin upstream/main:main
+          LOCAL="$(git rev-parse origin/main)"
+          UPSTREAM="$(git rev-parse upstream/main)"
+
+          echo "Current main:   ${LOCAL}"
+          echo "Upstream main:  ${UPSTREAM}"
+
+          if [ "${LOCAL}" = "${UPSTREAM}" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No upstream changes"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "New upstream changes detected"
+          fi
+
+      - name: Update main from upstream
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git checkout -B main origin/main
+          git reset --hard upstream/main
+          git push origin main --force-with-lease
 
       - name: Merge upstream into cube-custom
+        if: steps.changes.outputs.changed == 'true'
         run: |
           git checkout cube-custom
-          git merge upstream/main --no-edit
-
-      - name: Push cube-custom
-        run: |
+          git merge main --no-edit
           git push origin cube-custom
+
+      - name: Summary
+        run: |
+          echo "## Aeon Nox upstream sync" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Upstream: MikeSiLVO/skin.aeon.nox.silvo:main" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Mirror: main" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Custom branch: cube-custom" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Changes detected: ${{ steps.changes.outputs.changed }}" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: sync
+    if: needs.sync.outputs.upstream_changed == 'true'
+    uses: ./.github/workflows/deploy-to-my-repo.yml
+    secrets: inherit
