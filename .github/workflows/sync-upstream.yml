@@ -1,0 +1,47 @@
+name: Sync upstream
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout cube-custom
+        uses: actions/checkout@v4
+        with:
+          ref: cube-custom
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch MikeSiLVO upstream
+        run: |
+          git remote add upstream https://github.com/MikeSiLVO/skin.aeon.nox.silvo.git
+          git fetch upstream main
+
+      - name: Update clean main mirror
+        run: |
+          git push --force origin upstream/main:main
+
+      - name: Merge upstream into cube-custom
+        run: |
+          git checkout cube-custom
+          git merge upstream/main --no-edit
+
+      - name: Push cube-custom
+        run: |
+          git push origin cube-custom
