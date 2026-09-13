@@ -136,21 +136,19 @@ jobs:
           DEST="repo-silvo/piers/${ADDON_ID}"
 
           mkdir -p "${DEST}"
+          mkdir -p "${DEST}/resources/screenshots"
 
           rm -f "${DEST}/${ADDON_ID}-"*.zip
 
           cp "${ZIP_NAME}" "${DEST}/"
           cp addon.xml "${DEST}/addon.xml"
 
-          for asset in icon.png fanart.jpg; do
-            if [ -f "resources/${asset}" ]; then
-              cp "resources/${asset}" "${DEST}/${asset}"
-            elif [ -f "resources/media/${asset}" ]; then
-              cp "resources/media/${asset}" "${DEST}/${asset}"
-            elif [ -f "${asset}" ]; then
-              cp "${asset}" "${DEST}/${asset}"
-            fi
-          done
+          cp resources/icon.png "${DEST}/resources/icon.png"
+          cp resources/fanart.jpg "${DEST}/resources/fanart.jpg"
+
+          if [ -d resources/screenshots ]; then
+            cp resources/screenshots/* "${DEST}/resources/screenshots/"
+          fi
 
           echo "Deployed ${ADDON_ID} ${VERSION}"
 
