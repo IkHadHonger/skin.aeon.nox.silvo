@@ -33,11 +33,12 @@ jobs:
           upstream_version = root.get("version")
 
           match = re.fullmatch(r"(\d+\.\d+\.\d+)~beta(\d+)", upstream_version)
+          run_number = os.environ["GITHUB_RUN_NUMBER"]
 
           if match:
-              custom_version = f"{match.group(1)}.{match.group(2)}"
+              custom_version = f"{match.group(1)}.{run_number}"
           else:
-              custom_version = f"{upstream_version}.1"
+              custom_version = f"{upstream_version}.{run_number}"
 
           root.set("version", custom_version)
           tree.write(path, encoding="UTF-8", xml_declaration=True)
