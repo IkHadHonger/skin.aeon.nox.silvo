@@ -126,7 +126,7 @@
 					<onup condition="!Control.IsVisible(90010) + Control.IsVisible(90020) + !Skin.HasSetting(centermainmenu)">90020</onup>
 					<onup condition="!Control.IsVisible(90010) + !Control.IsVisible(90020)">9000</onup>
 					<ondown>9000</ondown>
-					<include condition="System.AddonIsEnabled(script.globalsearch) + !Skin.HasSetting(Disable.SearchButton)">HomeSearchButton</include>
+					<include condition="Skin.HasSetting(Enable.SearchButton)">HomeSearchButton</include>
 					<control type="label" id="9026">
 						<width>5</width>
 						<height>41</height>
@@ -137,7 +137,7 @@
 					<control type="multiimage">
 						<width>60</width>
 						<height>40</height>
-						<imagepath>$VAR[WeatherIconsPathVar]$INFO[Weather.FanartCode]$VAR[WeatherIconsExtVar]</imagepath>
+						<imagepath background="true">$VAR[WeatherIconsPathVar]$INFO[Weather.FanartCode]$VAR[WeatherIconsExtVar]</imagepath>
 						<aspectratio>keep</aspectratio>
 						<timeperimage>70</timeperimage>
 						<fadetime>1</fadetime>
@@ -173,7 +173,7 @@
 					<onup condition="!Control.IsVisible(90010) + Control.IsVisible(90020) + !Skin.HasSetting(centermainmenu)">90020</onup>
 					<onup condition="!Control.IsVisible(90010) + !Control.IsVisible(90020)">9000</onup>
 					<ondown>9000</ondown>
-					<include condition="System.AddonIsEnabled(script.globalsearch) + !Skin.HasSetting(Disable.SearchButton)">HomeSearchButton</include>
+					<include condition="Skin.HasSetting(Enable.SearchButton)">HomeSearchButton</include>
 					<control type="label" id="9026">
 						<width>5</width>
 						<height>41</height>
@@ -184,7 +184,7 @@
 					<control type="multiimage">
 						<width>60</width>
 						<height>40</height>
-						<imagepath>$VAR[WeatherIconsPathVar]$INFO[Weather.FanartCode]$VAR[WeatherIconsExtVar]</imagepath>
+						<imagepath background="true">$VAR[WeatherIconsPathVar]$INFO[Weather.FanartCode]$VAR[WeatherIconsExtVar]</imagepath>
 						<aspectratio>keep</aspectratio>
 						<timeperimage>70</timeperimage>
 						<fadetime>1</fadetime>
@@ -449,7 +449,7 @@
 					<control type="multiimage">
 						<width>65</width>
 						<height>40</height>
-						<imagepath>$VAR[WeatherIconsPathVar]$INFO[Weather.FanartCode]$VAR[WeatherIconsExtVar]</imagepath>
+						<imagepath background="true">$VAR[WeatherIconsPathVar]$INFO[Weather.FanartCode]$VAR[WeatherIconsExtVar]</imagepath>
 						<aspectratio>keep</aspectratio>
 						<timeperimage>70</timeperimage>
 						<fadetime>1</fadetime>
@@ -1078,7 +1078,6 @@
 						<top>-30</top>
 						<width>360</width>
 						<height>360</height>
-						<aligny>top</aligny>
 						<aspectratio align="left">keep</aspectratio>
 						<fadetime>300</fadetime>
 						<animation effect="rotate" end="-360" center="auto" time="8333" loop="true" reversible="false" condition="!Player.Paused">Conditional</animation>
@@ -1325,9 +1324,9 @@
 			<animation effect="slide" start="1400,0" end="0,0" delay="800" time="480" condition="Window.Previous(startup)">WindowOpen</animation>
 			<animation effect="slide" end="0,-993" time="320" tween="cubic" easing="inout" condition="[System.Getbool(lookandfeel.enablerssfeeds) + String.IsEqual(Skin.String(VerticalMenuRSS.Position),$LOCALIZE[419])] | [!System.Getbool(lookandfeel.enablerssfeeds) + String.IsEqual(Skin.String(VerticalMenuSystemBar.Position),$LOCALIZE[418])]">Conditional</animation>
 			<animation effect="slide" end="1250,0" time="320" tween="cubic" easing="inout" condition="!System.Getbool(lookandfeel.enablerssfeeds)">Conditional</animation>
-			<animation effect="slide" end="100,0" time="320" tween="cubic" easing="inout" condition="!System.Getbool(lookandfeel.enablerssfeeds) + !Skin.HasSetting(Disable.SearchButton) + !System.HasMediaDVD">Conditional</animation>
-			<animation effect="slide" end="50,0" time="320" tween="cubic" easing="inout" condition="!System.Getbool(lookandfeel.enablerssfeeds) + Skin.HasSetting(Disable.SearchButton) + System.HasMediaDVD">Conditional</animation>
-			<visible>System.Getbool(lookandfeel.enablerssfeeds) | [System.AddonIsEnabled(script.globalsearch) + !Skin.HasSetting(Disable.SearchButton)] | System.HasMediaDVD</visible>
+			<animation effect="slide" end="100,0" time="320" tween="cubic" easing="inout" condition="!System.Getbool(lookandfeel.enablerssfeeds) + Skin.HasSetting(Enable.SearchButton) + !System.HasMediaDVD">Conditional</animation>
+			<animation effect="slide" end="50,0" time="320" tween="cubic" easing="inout" condition="!System.Getbool(lookandfeel.enablerssfeeds) + !Skin.HasSetting(Enable.SearchButton) + System.HasMediaDVD">Conditional</animation>
+			<visible>System.Getbool(lookandfeel.enablerssfeeds) | Skin.HasSetting(Enable.SearchButton) | System.HasMediaDVD</visible>
 			<top>1036</top>
 			<control type="group">
 				<animation effect="slide" end="-410,0" time="320" tween="cubic" easing="inout" condition="String.Contains(Container(9000).ListItem.Property(widgetStyle),Extended) + ControlGroup(90010).HasFocus">Conditional</animation>
@@ -1386,7 +1385,7 @@
 					<onup condition="!Control.IsVisible(90010) + !Control.IsVisible(90020)">9000</onup>
 					<animation effect="slide" end="-410,0" time="320" tween="cubic" easing="inout" condition="String.Contains(Container(9000).ListItem.Property(widgetStyle),Extended) + ControlGroup(90010).HasFocus">Conditional</animation>
 					<animation effect="slide" end="-410,0" time="320" tween="cubic" easing="inout" condition="String.Contains(Container(9000).ListItem.Property(widgetStyle.2),Extended) + ControlGroup(90020).HasFocus">Conditional</animation>
-					<include condition="System.AddonIsEnabled(script.globalsearch) + !Skin.HasSetting(Disable.SearchButton)">HomeSearchButton</include>
+					<include condition="Skin.HasSetting(Enable.SearchButton)">HomeSearchButton</include>
 					<control type="label">
 						<width>410</width>
 						<label />
@@ -1395,7 +1394,7 @@
 					</control>
 					<control type="rss">
 						<height>30</height>
-						<width min="1210" max="1770">auto</width>
+						<width>1770</width>
 						<font>font13</font>
 						<urlset>1</urlset>
 						<textcolor>$VAR[ThemeHomeLabelColor]</textcolor>
@@ -1562,7 +1561,7 @@
 			<animation effect="fade" time="600">WindowOpen</animation>
 			<animation effect="fade" time="600">WindowClose</animation>
 			<animation effect="slide" end="0,40" time="300" tween="cubic" easing="inout" condition="String.IsEqual(Skin.String(MainMenu.Layout),vertical)">Conditional</animation>
-			<visible>![Player.HasAudio + Skin.HasSetting(Enable.ArtistSlideshowOnHome) + !String.IsEmpty(Window(Visualisation).Property(ArtistSlideshow.Image))]</visible>
+			<visible>![Player.HasAudio + Skin.HasSetting(Enable.ArtistFanartOnHome) + !String.IsEmpty(Window(Home).Property(SkinInfo.Player.Online.Music.Artist.FanArt))]</visible>
 			<visible>![ControlGroup(90010).HasFocus() | ControlGroup(90020).HasFocus()] | [!String.IsEmpty(Container(9000).ListItem.Property(widgetDisableFanart)) + ControlGroup(90010).HasFocus() | !ControlGroup(90010).HasFocus()] + [!String.IsEmpty(Container(9000).ListItem.Property(widgetDisableFanart.2)) + ControlGroup(90020).HasFocus() | !ControlGroup(90020).HasFocus()]</visible>
 			<visible>[String.StartsWith(Container(9000).ListItem.Property(backgroundType),playlist) | String.EndsWith(Container(9000).ListItem.Property(background),-fanart)] + !String.IsEqual(Container(9000).ListItem.Property(background),Weather.Fanart) + ![Control.HasFocus(9010) + !String.IsEmpty(Container(9010).ListItem.Property(background)) + !String.EndsWith(Container(9010).ListItem.Property(background),-fanart) + !String.StartsWith(Container(9010).ListItem.Property(backgroundType),playlist)] + ![Player.HasVideo + !Skin.HasSetting(Disable.ShowBackgroundVideo)]</visible>
 		</control>

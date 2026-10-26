@@ -5,8 +5,8 @@
 	<onload>ClearProperty(MediaMenu,Home)</onload>
 	<onunload>ClearProperty(MediaMenu,Home)</onunload>
 	<onunload>ClearProperty(Window.HasSettings,Home)</onunload>
-	<onunload condition="!String.IsEmpty(Skin.String(FanartTimePerImage)) + Skin.HasSetting(SkinInfo.EnableSlideshow)">Skin.SetString(SkinInfo.SlideshowRefreshInterval,$INFO[Skin.String(FanartTimePerImage)])</onunload>
-	<onunload condition="String.IsEmpty(Skin.String(FanartTimePerImage)) + Skin.HasSetting(SkinInfo.EnableSlideshow)">Skin.SetString(SkinInfo.SlideshowRefreshInterval,7)</onunload>
+	<onunload condition="!String.IsEmpty(Skin.String(FanartTimePerImage)) + Skin.HasSetting(SkinInfo.EnableSlideshow) + !String.IsEqual(Skin.String(SkinInfo.SlideshowRefreshInterval),Skin.String(FanartTimePerImage))">Skin.SetString(SkinInfo.SlideshowRefreshInterval,$INFO[Skin.String(FanartTimePerImage)])</onunload>
+	<onunload condition="String.IsEmpty(Skin.String(FanartTimePerImage)) + Skin.HasSetting(SkinInfo.EnableSlideshow) + !String.IsEqual(Skin.String(SkinInfo.SlideshowRefreshInterval),7)">Skin.SetString(SkinInfo.SlideshowRefreshInterval,7)</onunload>
 	<controls>
 		<control type="group">
 			<animation effect="fade" time="500" delay="400" condition="Window.Previous(Home)">WindowOpen</animation>
@@ -244,9 +244,8 @@
 						<control type="radiobutton" id="10013">
 							<include>SettingsButtonCommonValues</include>
 							<label>$LOCALIZE[31158]</label>
-							<onclick>Skin.ToggleSetting(Disable.SearchButton)</onclick>
-							<selected>Skin.HasSetting(Disable.SearchButton)</selected>
-							<visible>System.AddonIsEnabled(script.globalsearch)</visible>
+							<onclick>Skin.ToggleSetting(Enable.SearchButton)</onclick>
+							<selected>Skin.HasSetting(Enable.SearchButton)</selected>
 							<visible>!Skin.HasSetting(HideSystemBars)</visible>
 						</control>
 						<control type="button" id="10014">
@@ -263,9 +262,8 @@
 						<control type="radiobutton" id="20000">
 							<include>SettingsButtonCommonValues</include>
 							<label>$LOCALIZE[31154]</label>
-							<onclick>Skin.ToggleSetting(Enable.ArtistSlideshowOnHome)</onclick>
-							<selected>Skin.HasSetting(Enable.ArtistSlideshowOnHome)</selected>
-							<visible>System.AddonIsEnabled(script.artistslideshow)</visible>
+							<onclick>Skin.ToggleSetting(Enable.ArtistFanartOnHome)</onclick>
+							<selected>Skin.HasSetting(Enable.ArtistFanartOnHome)</selected>
 						</control>
 						<control type="radiobutton" id="20001">
 							<include>SettingsButtonCommonValues</include>
@@ -720,9 +718,8 @@
 						<control type="button" id="90004">
 							<include>SettingsButtonCommonValues</include>
 							<align>center</align>
-							<!-- kdk-ignore: labels -->
-							<label>FAQ</label>
-							<onclick>RunScript(script.skin.info.service,dialog=textviewer,heading=FAQ,file=special://skin/faq.txt)</onclick>
+							<label>$LOCALIZE[31995]</label>
+							<onclick>RunScript(script.skin.info.service,dialog=textviewer,heading=$LOCALIZE[31995],file=special://skin/faq.txt)</onclick>
 						</control>
 					</control>
 					<control type="group">
